@@ -79,7 +79,6 @@ public class UIManager : MonoBehaviour
     {
         StartCoroutine(OpenCanvas(EndCanvas));
         StartCoroutine(CloseCanvas(GameCanvas));
-        //scoreTextEndMenu.text = "Your Score: " + gm.sm.currentScore.ToString();
     }
 
     public void ChangeVolume()
