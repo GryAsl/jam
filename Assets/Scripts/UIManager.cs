@@ -27,7 +27,7 @@ public class UIManager : MonoBehaviour
 
     public void StartGame()
     {
-        Cursor.lockState = CursorLockMode.Confined;
+        //Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
         StartCoroutine(OpenCanvas(GameCanvas));
         StartCoroutine(CloseCanvas(MainCanvas));
@@ -111,6 +111,6 @@ public class UIManager : MonoBehaviour
 
     public void MoveItemsLeft()
     {
-
+        StartCoroutine(GameObject.Find("Player").GetComponent<Player>().MoveLeft());
     }
 }

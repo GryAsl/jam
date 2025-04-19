@@ -5,6 +5,7 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     Vector3 startLoc;
+    public string itemName;
     void Start()
     {
         startLoc = transform.position;
