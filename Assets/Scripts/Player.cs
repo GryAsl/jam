@@ -67,8 +67,8 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-
-            HandleMovementInput();
+        Cursor.visible = true;
+        HandleMovementInput();
         if (gm.isInventoryOn)
             return;
         rotY += Input.GetAxis("Mouse X") * camSens;
@@ -80,7 +80,6 @@ public class Player : MonoBehaviour
 
 
         GroundedMov();
-        CheckGround();
         ApplyGravity();
         controller.Move(move * Time.deltaTime);
     }
@@ -117,8 +116,14 @@ public class Player : MonoBehaviour
                 else if (hit.collider.CompareTag("climb"))
                 {
                     Debug.Log(hit.collider);
+                    climbingInput = true; //Bunu bi ara GetKey ile yapmam lazim
                 }
             }
+        }
+        
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            climbingInput = false;
         }
 
         if (Input.GetKeyDown(KeyCode.I))
@@ -126,13 +131,13 @@ public class Player : MonoBehaviour
             gm.ToggleInventory();
             SetItemTransform(0);
             SetItemTransform(1);
-            SetItemTransform(2);
+            //SetItemTransform(2);
 
         }
 
         if(Input.GetKeyUp(KeyCode.Space) && jumpCharges > 0)
         {
-            Jump();
+            Jump(1f);
         }
 
     }
@@ -199,25 +204,31 @@ public class Player : MonoBehaviour
 
 
 
-                Debug.LogWarning(t);
                 if (t < .4f)
                     t += Time.deltaTime;
                 else t = 1.01f;
                     yield return null;
             }
-            Debug.Log("Bitti");
+            //if (inventoryIndex == 0)
+            //{
+            //    scaleRightStart = items[1].transform.localScale;
+            //    t = 0;
+            //    while (t <= 1)
+            //    {
+            //        SetItemTransformbyTransform(1, points[0].transform.position, Vector3.Lerp(Vector3.zero, points[0].transform.localScale, t));
+            //        Debug.LogWarning("2: " + t);
+
+            //        t += Time.deltaTime * 2f;
+            //        yield return null;
+            //    }
+            //}
             if (inventoryIndex == 0)
             {
-                scaleRightStart = items[1].transform.localScale;
-                t = 0;
-                while (t <= 1)
-                {
-                    SetItemTransformbyTransform(1, points[0].transform.position, Vector3.Lerp(Vector3.zero, points[0].transform.localScale, t));
-                    Debug.LogWarning("2: " + t);
-
-                    t += Time.deltaTime * 2f;
-                    yield return null;
-                }
+                inventoryIndex = 2;
+            }
+            else if (inventoryIndex == -1)
+            {
+                inventoryIndex = 0;
             }
         }
         else if (items.Count == 3){
@@ -257,7 +268,7 @@ public class Player : MonoBehaviour
         //        yield return null;
         //    }
         //}
-            inventoryIndex++;
+            
     }
 
     public IEnumerator MoveLeft()
@@ -288,16 +299,13 @@ public class Player : MonoBehaviour
                     SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[0].transform.localScale, t));
                     nameText.text = items[0].GetComponent<Item>().itemName;
                 }
-                Debug.LogWarning(t);
                 if (t < .4f)
                     t += Time.deltaTime;
                 else t = 1.01f;
                 yield return null;
             }
-            Debug.Log("Bitti");
-            scaleRightStart = items[1].transform.localScale;
-            t = 0;
-            
+
+
         }
         else if (items.Count == 3)
         {
@@ -337,11 +345,24 @@ public class Player : MonoBehaviour
         //        yield return null;
         //    }
         //}
-        inventoryIndex--;
+        if (inventoryIndex == 0)
+        {
+            inventoryIndex = -1;
+        }
+        else if (inventoryIndex == -1)
+        {
+
+        }
+        else if (inventoryIndex == 1)
+        {
+            inventoryIndex = 0;
+        }
+
     }
 
     void SetItemTransform(int index)
     {
+        Debug.Log(index);
         items[index].transform.position = points[index].transform.position;
         items[index].transform.localScale = points[index].transform.localScale;
         items[index].transform.rotation = points[index].transform.rotation;
@@ -355,24 +376,25 @@ public class Player : MonoBehaviour
 
     void ApplyGravity()
     {
-        gravity = normalGravity;
-        yVelocity.y += gravity * -2f * Time.deltaTime;
-        controller.Move(yVelocity * Time.deltaTime);
-    }
-
-    void CheckGround()
-    {
-        isGrounded = Physics.CheckSphere(groundCheck.position, 20f, groundMask);
-        if (isGrounded)
+        if (climbingInput)
         {
-            jumpCharges = 1;
+            Jump(.31f);
         }
+        else
+        {
+            gravity = normalGravity;
+            yVelocity.y += gravity * -2f * Time.deltaTime;
+            yVelocity.y = Mathf.Clamp(yVelocity.y, -normalGravity, 999);
+            controller.Move(yVelocity * Time.deltaTime);
+        }
+
     }
 
 
-    void Jump()
+    void Jump(float multiplier)
     {
-        Debug.Log("ALLAH BÜYÜK");
-       yVelocity.y = Mathf.Sqrt(jumpHeight * -2000f * normalGravity);
+        yVelocity.y = Mathf.Sqrt(jumpHeight * 10f * multiplier * normalGravity);
+        controller.Move(yVelocity * Time.deltaTime);
+        jumpCharges = 0;
     }
 }

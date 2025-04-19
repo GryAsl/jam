@@ -12,10 +12,13 @@ public class UIManager : MonoBehaviour
     public GameObject SettingsCanvas;
     public GameObject EndCanvas;
     public GameObject InventoryCanvas;
+    public GameObject PasswordCanvas;
     public GameObject currentCanvas;
     public float canvasSpeed;
     public AudioSource audioS;
     public Slider slider;
+    public TextMeshProUGUI password;
+    public string passwordText;
 
     void Start()
     {
@@ -76,8 +79,6 @@ public class UIManager : MonoBehaviour
 
 
 
-
-
     public void EndGame()
     {
         StartCoroutine(OpenCanvas(EndCanvas));
@@ -112,5 +113,72 @@ public class UIManager : MonoBehaviour
     public void MoveItemsLeft()
     {
         StartCoroutine(GameObject.Find("Player").GetComponent<Player>().MoveLeft());
+    }
+    
+    public void One()
+    {
+        passwordText += "1";
+        password.text = passwordText;
+    }
+    public void Two()
+    {
+        passwordText += "2";
+        password.text = passwordText;
+    }
+    public void Three()
+    {
+        passwordText += "3";
+        password.text = passwordText;
+    }
+
+    public void Four()
+    {
+        passwordText += "4";
+        password.text = passwordText;
+    }
+
+    public void Five()
+    {
+        passwordText += "5";
+        password.text = passwordText;
+    }
+
+    public void Six()
+    {
+        passwordText += "6";
+        password.text = passwordText;
+    }
+
+    public void Seven()
+    {
+        passwordText += "7";
+        password.text = passwordText;
+    }
+
+    public void Eight()
+    {
+        passwordText += "8";
+        password.text = passwordText;
+    }
+
+    public void Nine()
+    {
+        passwordText += "9";
+        password.text = passwordText;
+    }
+
+    public void TryPassword()
+    {
+        if(passwordText == "3131")
+        {
+            password.color = Color.green;
+            Invoke("TurnOffPasswordUI", 1f);
+        }
+    }
+
+    void TurnOffPasswordUI()
+    {
+        StartCoroutine(OpenCanvas(GameCanvas));
+        StartCoroutine(CloseCanvas(PasswordCanvas));
     }
 }

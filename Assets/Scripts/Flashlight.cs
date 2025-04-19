@@ -25,7 +25,6 @@ public class Flashlight : MonoBehaviour
         {
             if(currentPower < .1f && cor == null)
             {
-                Debug.Log("Anan");
                 cor = StartCoroutine(FlashEffect());
             }
             else currentPower -= .05f * Time.deltaTime;
