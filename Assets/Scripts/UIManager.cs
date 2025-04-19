@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     public GameObject MainCanvas;
     public GameObject SettingsCanvas;
     public GameObject EndCanvas;
+    public GameObject InventoryCanvas;
     public GameObject currentCanvas;
     public float canvasSpeed;
     public AudioSource audioS;
@@ -20,12 +21,14 @@ public class UIManager : MonoBehaviour
     {
         gm = gameObject.GetComponent<GameManager>();
         currentCanvas = MainCanvas;
-        //Cursor.lockState = CursorLockMode.Confined;
+
     }
 
 
     public void StartGame()
     {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = false;
         StartCoroutine(OpenCanvas(GameCanvas));
         StartCoroutine(CloseCanvas(MainCanvas));
         gm.StartGame();
@@ -86,5 +89,28 @@ public class UIManager : MonoBehaviour
         audioS.volume = slider.value;
     }
 
+    public void OpenInventory()
+    {
+        Cursor.visible = true;
+        StartCoroutine(OpenCanvas(InventoryCanvas));
+        StartCoroutine(CloseCanvas(GameCanvas));
+    }
 
+    public void CloseInventory()
+    {
+        Cursor.visible = false;
+        StartCoroutine(OpenCanvas(GameCanvas));
+        StartCoroutine(CloseCanvas(InventoryCanvas));
+    }
+
+    public void MoveItemsRight()
+    {
+        StartCoroutine(GameObject.Find("Player").GetComponent<Player>().MoveRight());
+
+    }
+
+    public void MoveItemsLeft()
+    {
+
+    }
 }
