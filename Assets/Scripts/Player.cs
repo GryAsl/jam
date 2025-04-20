@@ -68,6 +68,8 @@ public class Player : MonoBehaviour
     {
 
         Cursor.visible = true;
+        Debug.LogError(controller.isGrounded);
+        
         HandleMovementInput();
         if (gm.isInventoryOn)
             return;
@@ -95,11 +97,15 @@ public class Player : MonoBehaviour
         {
             maxSpeed = runSpeed;
             StartCoroutine(IncreaseFOV());
+            GetComponent<Headbob>().amplitude = GetComponent<Headbob>().amplitudeRun;
+            GetComponent<Headbob>()._frequency = 15f;
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             maxSpeed = walkSpeed;
             StartCoroutine(DecreaseFOV());
+            GetComponent<Headbob>().amplitude = GetComponent<Headbob>().amplitudeNormal;
+            GetComponent<Headbob>()._frequency = 10f;
         }
 
         if (Input.GetKeyDown(KeyCode.E))

@@ -18,13 +18,26 @@ public class UIManager : MonoBehaviour
     public AudioSource audioS;
     public Slider slider;
     public TextMeshProUGUI password;
+    public TextMeshProUGUI storyText;
+    public Image storyBackgroundImage;
+    public Image startBackgroundImage;
     public string passwordText;
+    public GameObject storyPlane;
 
     void Start()
     {
         gm = gameObject.GetComponent<GameManager>();
         currentCanvas = MainCanvas;
+        storyPlane = GameObject.Find("Story");
+        storyPlane.transform.localPosition = new Vector3(storyPlane.transform.localPosition.x, -.55f, storyPlane.transform.localPosition.z);
+    }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            StartCoroutine(StoryTelling());
+        }
     }
 
 
@@ -34,6 +47,7 @@ public class UIManager : MonoBehaviour
         Cursor.visible = false;
         StartCoroutine(OpenCanvas(GameCanvas));
         StartCoroutine(CloseCanvas(MainCanvas));
+        StartCoroutine(StartGameUI());
         gm.StartGame();
     }
 
@@ -180,5 +194,83 @@ public class UIManager : MonoBehaviour
     {
         StartCoroutine(OpenCanvas(GameCanvas));
         StartCoroutine(CloseCanvas(PasswordCanvas));
+    }
+
+    IEnumerator StoryTelling()
+    {
+        float t = 0f;
+        Color col = storyBackgroundImage.color;
+        storyPlane.GetComponent<MyAnimation>().Play = true;
+        while (t <= 1)
+        {
+            t += Time.deltaTime;
+            storyText.alpha += .01f;
+            Debug.Log(col);
+            col.a += .008f;
+            storyBackgroundImage.color = col;
+            storyPlane.transform.localPosition = Vector3.Lerp(storyPlane.transform.localPosition, new Vector3(storyPlane.transform.localPosition.x, -.15f, storyPlane.transform.localPosition.z), t);
+
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
+    IEnumerator StartGameUI()
+    {
+        float t = 0f;
+        float lastA = 1f;
+        float waitTime = .05f;
+        Color col = Color.black;
+        while (t <= .5f)
+        {
+            t += .002f;
+            col.a = Mathf.Lerp(lastA, 0f, t);
+            startBackgroundImage.color = col;
+            Debug.Log(col);
+            yield return new WaitForFixedUpdate();
+        }
+        yield return new WaitForSeconds(waitTime * .5f);
+        t = 0;
+        lastA = col.a;
+        while (t <= .95f)
+        {
+            t += .01f;
+            col.a = Mathf.Lerp(lastA, 1f, t);
+            startBackgroundImage.color = col;
+            Debug.Log(col);
+            yield return new WaitForFixedUpdate();
+        }
+        yield return new WaitForSeconds(waitTime);
+        lastA = col.a;
+        t = 0;
+        while (t <= .85f)
+        {
+            t += .006f;
+            col.a = Mathf.Lerp(lastA, 0f, t);
+            startBackgroundImage.color = col;
+            Debug.Log(col);
+            yield return new WaitForFixedUpdate();
+        }
+        yield return new WaitForSeconds(waitTime);
+        t = 0;
+        lastA = col.a;
+        while (t <= .8f)
+        {
+            t += .01f;
+            col.a = Mathf.Lerp(lastA, 1f, t);
+            startBackgroundImage.color = col;
+            Debug.Log(col);
+            yield return new WaitForFixedUpdate();
+        }
+        yield return new WaitForSeconds(waitTime);
+        lastA = col.a;
+        t = 0;
+        while (t <= 1f)
+        {
+            t += .01f;
+            col.a = Mathf.Lerp(lastA, 0f, t);
+            startBackgroundImage.color = col;
+            Debug.Log(col);
+            yield return new WaitForFixedUpdate();
+        }
     }
 }
