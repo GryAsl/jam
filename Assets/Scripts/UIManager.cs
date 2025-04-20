@@ -300,6 +300,9 @@ public class UIManager : MonoBehaviour
             Debug.Log(col);
             yield return new WaitForFixedUpdate();
         }
+
+        yield return new WaitForSeconds(.5f);
+        GameObject.Find("kapsül2").GetComponent<Case>().rotate = true;
     }
 
     public void UseItem()
