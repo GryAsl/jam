@@ -28,5 +28,6 @@ public class Item : MonoBehaviour
             t += Time.deltaTime;
             yield return null;
         }
+        GameObject.Find("Player").GetComponent<Player>().TurnOffItems();
     }
 }

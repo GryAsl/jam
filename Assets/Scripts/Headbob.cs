@@ -28,6 +28,7 @@ public class Headbob : MonoBehaviour
         CheckMotion();
         ResetPosition();
         _camera.LookAt(FocusTarget());
+        _camera.transform.localEulerAngles = new Vector3(-GetComponent<Player>().rotX, 0, 0); 
     }
     private Vector3 FootStepMotion()
     {

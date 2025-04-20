@@ -19,6 +19,7 @@ public class UIManager : MonoBehaviour
     public Slider slider;
     public TextMeshProUGUI password;
     public TextMeshProUGUI storyText;
+    public TextMeshProUGUI bigStoryText;
     public Image storyBackgroundImage;
     public Image startBackgroundImage;
     public string passwordText;
@@ -199,6 +200,9 @@ public class UIManager : MonoBehaviour
     IEnumerator StoryTelling()
     {
         float t = 0f;
+        
+
+        t = 0f;
         Color col = storyBackgroundImage.color;
         storyPlane.GetComponent<MyAnimation>().Play = true;
         while (t <= 1)
@@ -217,34 +221,56 @@ public class UIManager : MonoBehaviour
     IEnumerator StartGameUI()
     {
         float t = 0f;
+        yield return new WaitForSeconds(1f);
+        while (t <= 1)
+        {
+            t += .02f;
+            bigStoryText.alpha = Mathf.Lerp(0f, 1f, t);
+
+            yield return new WaitForFixedUpdate();
+        }
+        yield return new WaitForSeconds(1f);
+        t = 0;
+        while (t <= 1)
+        {
+            t += .05f;
+            bigStoryText.alpha = Mathf.Lerp(1f, 0f, t);
+
+            yield return new WaitForFixedUpdate();
+        }
+        yield return new WaitForSeconds(1f);
+
+        t = 0f;
         float lastA = 1f;
         float waitTime = .05f;
         Color col = Color.black;
-        while (t <= .5f)
+        while (t <= .55f)
         {
-            t += .002f;
+            t += .0025f;
             col.a = Mathf.Lerp(lastA, 0f, t);
             startBackgroundImage.color = col;
-            Debug.Log(col);
+            Debug.Log("0: " + col);
             yield return new WaitForFixedUpdate();
         }
         yield return new WaitForSeconds(waitTime * .5f);
         t = 0;
         lastA = col.a;
+        Debug.LogWarning("1: " + lastA);
         while (t <= .95f)
         {
-            t += .01f;
+            t += .008f;
             col.a = Mathf.Lerp(lastA, 1f, t);
             startBackgroundImage.color = col;
-            Debug.Log(col);
+            Debug.Log("1: " + col);
             yield return new WaitForFixedUpdate();
         }
         yield return new WaitForSeconds(waitTime);
         lastA = col.a;
         t = 0;
+        Debug.LogWarning("2: " + lastA);
         while (t <= .85f)
         {
-            t += .006f;
+            t += .005f;
             col.a = Mathf.Lerp(lastA, 0f, t);
             startBackgroundImage.color = col;
             Debug.Log(col);
@@ -253,7 +279,8 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         t = 0;
         lastA = col.a;
-        while (t <= .8f)
+        Debug.LogWarning("3: " + lastA);
+        while (t <= .85f)
         {
             t += .01f;
             col.a = Mathf.Lerp(lastA, 1f, t);
@@ -264,6 +291,7 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         lastA = col.a;
         t = 0;
+        Debug.LogWarning("4: " + lastA);
         while (t <= 1f)
         {
             t += .01f;
@@ -272,5 +300,11 @@ public class UIManager : MonoBehaviour
             Debug.Log(col);
             yield return new WaitForFixedUpdate();
         }
+    }
+
+    public void UseItem()
+    {
+        Debug.LogWarning("X");
+        GameObject.Find("Player").GetComponent<Player>().UseItem();
     }
 }

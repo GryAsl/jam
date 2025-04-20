@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         isGameOn = true;
+        Application.targetFrameRate = 60;
     }
 
     public void EndGame()
@@ -38,8 +39,15 @@ public class GameManager : MonoBehaviour
     public void ToggleInventory()
     {
         if (isInventoryOn)
+        {
             uiManager.CloseInventory();
-        else uiManager.OpenInventory();
+            player.TurnOffItems();
+        }
+        else
+        {
+            uiManager.OpenInventory();
+            player.TurnOnItems();
+        }
         isInventoryOn = !isInventoryOn;
     }
 

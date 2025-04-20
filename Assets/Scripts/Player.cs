@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     Camera cam;
 
     float rotY = 0f;
-    float rotX = 0f;
+    public float rotX = 0f;
 
 
     [Header("Movement")]
@@ -41,14 +41,19 @@ public class Player : MonoBehaviour
     public Collider boxCollider;
     public RaycastHit[] hits;
     public List<GameObject> items = new();
+    public GameObject item;
 
     [Header("Other")]
     public GameObject flashlight;
     public GameManager gm;
     public GameObject[] points;
-    public GameObject point;
-    public GameObject pointLeft;
-    public GameObject pointRight;
+    private GameObject point;
+    private GameObject pointLeft;
+    private GameObject pointRight;
+    public GameObject note;
+    bool isNoteOn;
+    Vector3 noteStartTrans;
+    Vector3 noteStartTransS;
     public int inventoryIndex;
     public TextMeshProUGUI nameText;
 
@@ -68,7 +73,6 @@ public class Player : MonoBehaviour
     {
 
         Cursor.visible = true;
-        Debug.LogError(controller.isGrounded);
         
         HandleMovementInput();
         if (gm.isInventoryOn)
@@ -78,7 +82,7 @@ public class Player : MonoBehaviour
         rotX = Mathf.Clamp(rotX, minX, maxX);
 
         transform.localEulerAngles = new Vector3(0, rotY, 0);
-        cam.transform.localEulerAngles = new Vector3(-rotX, 0, 0);
+        //cam.transform.localEulerAngles = new Vector3(-rotX, 0, 0);
 
 
         GroundedMov();
@@ -124,6 +128,24 @@ public class Player : MonoBehaviour
                     Debug.Log(hit.collider);
                     climbingInput = true; //Bunu bi ara GetKey ile yapmam lazim
                 }
+                else if (hit.collider.CompareTag("note"))
+                {
+                    Debug.Log(hit.collider);
+                    note = hit.collider.gameObject;
+                    if (!isNoteOn)
+                    {
+                        noteStartTrans = note.transform.position;
+                        noteStartTransS = note.transform.localScale;
+                        StartCoroutine(Note());
+                        isNoteOn = true;
+                    }
+                    else
+                    {
+                        StartCoroutine(NoteBack());
+                        isNoteOn = false;
+                    }
+
+                }
             }
         }
         
@@ -167,7 +189,6 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKeyUp(KeyCode.LeftShift))
                 yield break;
-            Debug.Log("+");
             cam.fieldOfView += 50f * Time.deltaTime;
             yield return null;
         }
@@ -179,7 +200,6 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.LeftShift))
                 yield break;
-            Debug.Log("-");
             cam.fieldOfView -= 50f * Time.deltaTime;
             yield return null;
         }
@@ -231,10 +251,12 @@ public class Player : MonoBehaviour
             if (inventoryIndex == 0)
             {
                 inventoryIndex = 2;
+                item = items[1];
             }
             else if (inventoryIndex == -1)
             {
                 inventoryIndex = 0;
+                item = items[0];
             }
         }
         else if (items.Count == 3){
@@ -354,6 +376,7 @@ public class Player : MonoBehaviour
         if (inventoryIndex == 0)
         {
             inventoryIndex = -1;
+            item = items[1];
         }
         else if (inventoryIndex == -1)
         {
@@ -362,6 +385,7 @@ public class Player : MonoBehaviour
         else if (inventoryIndex == 1)
         {
             inventoryIndex = 0;
+            item = items[0];
         }
 
     }
@@ -378,6 +402,12 @@ public class Player : MonoBehaviour
     {
         items[index].transform.position = pos;
         items[index].transform.localScale = scale;
+    }
+
+    void SetObjectTransformbyTransform(GameObject go, Vector3 pos, Vector3 scale)
+    {
+        go.transform.position = pos;
+        go.transform.localScale = scale;
     }
 
     void ApplyGravity()
@@ -402,5 +432,68 @@ public class Player : MonoBehaviour
         yVelocity.y = Mathf.Sqrt(jumpHeight * 10f * multiplier * normalGravity);
         controller.Move(yVelocity * Time.deltaTime);
         jumpCharges = 0;
+    }
+
+    IEnumerator Note()
+    {
+        float t = 0f;
+        while (t <= 1)
+        {
+            SetObjectTransformbyTransform(note, Vector3.Lerp(note.transform.position, points[0].transform.position, t), Vector3.Lerp(note.transform.localScale, points[0].transform.localScale, t));
+            if (t < .4f)
+                t += Time.deltaTime;
+            else t = 1.01f;
+            yield return null;
+        }
+    }
+
+    IEnumerator NoteBack()
+    {
+        float t = 0f;
+        while (t <= 1)
+        {
+            SetObjectTransformbyTransform(note, Vector3.Lerp(note.transform.position, noteStartTrans, t), Vector3.Lerp(note.transform.localScale, noteStartTransS, t));
+            if (t < .4f)
+                t += Time.deltaTime;
+            else t = 1.01f;
+            yield return null;
+        }
+    }
+
+    public void UseItem()
+    {
+        Debug.LogWarning("ah");
+        hits = Physics.BoxCastAll(boxCollider.bounds.center, boxCollider.bounds.size, transform.forward, transform.rotation, 1f);
+        foreach (RaycastHit hit in hits)
+        {
+                Debug.Log(hit.collider);
+            if (hit.collider.CompareTag("door"))
+            {
+                Debug.Log(hit.collider);
+                StartCoroutine(UseItemVisual());
+            }
+        }
+    }
+
+    IEnumerator UseItemVisual()
+    {
+        yield return new WaitForSeconds(.5f);
+        gm.ToggleInventory();
+
+    }
+
+    public void TurnOnItems()
+    {
+        foreach(GameObject go in items)
+        {
+            go.SetActive(true);
+        }
+    }
+    public void TurnOffItems()
+    {
+        foreach (GameObject go in items)
+        {
+            go.SetActive(false);
+        }
     }
 }
