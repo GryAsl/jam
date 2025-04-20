@@ -24,6 +24,8 @@ public class Headbob : MonoBehaviour
 
     void Update()
     {
+        if (Cursor.visible == true)
+            return;
         if (!_enable) return;
         CheckMotion();
         ResetPosition();

@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     {
         isGameOn = true;
         Application.targetFrameRate = 60;
+        Cursor.visible = false;
     }
 
     public void EndGame()

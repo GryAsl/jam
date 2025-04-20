@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -54,8 +54,13 @@ public class Player : MonoBehaviour
     bool isNoteOn;
     Vector3 noteStartTrans;
     Vector3 noteStartTransS;
+    Quaternion noteStartTransR;
+    public GameObject noteGO;
     public int inventoryIndex;
     public TextMeshProUGUI nameText;
+    public bool puzlleDone;
+    public MeshRenderer meshR;
+    public Material greenM;
 
 
 
@@ -72,8 +77,7 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-        Cursor.visible = true;
-        
+
         HandleMovementInput();
         if (gm.isInventoryOn)
             return;
@@ -81,7 +85,8 @@ public class Player : MonoBehaviour
         rotX += Input.GetAxis("Mouse Y") * camSens;
         rotX = Mathf.Clamp(rotX, minX, maxX);
 
-        transform.localEulerAngles = new Vector3(0, rotY, 0);
+        if (Cursor.visible == false)
+            transform.localEulerAngles = new Vector3(0, rotY, 0);
         //cam.transform.localEulerAngles = new Vector3(-rotX, 0, 0);
 
 
@@ -114,14 +119,35 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            hits = Physics.BoxCastAll(boxCollider.bounds.center, boxCollider.bounds.size, transform.forward, transform.rotation, 1f);
-            foreach(RaycastHit hit in hits)
+            hits = Physics.BoxCastAll(boxCollider.bounds.center, boxCollider.bounds.size, transform.forward, transform.rotation, .8f);
+            foreach (RaycastHit hit in hits)
             {
+                Debug.Log("ZA: " + hit.collider.name);
+                if (hit.collider.CompareTag("puzzle"))
+                {
+                    if (!puzlleDone)
+                    {
+                        Debug.LogWarning(hit.collider);
+                        gm.uiManager.TurnOnPasswordUI();
+                        puzlleDone = true;
+                        Cursor.visible = true;
+                        return;
+                    }
+                }
                 if (hit.collider.CompareTag("item"))
                 {
-                    Debug.Log(hit.collider);
-                    items.Add(hit.collider.gameObject);
-                    hit.collider.gameObject.GetComponent<Item>().StartAnim();
+                    if (puzlleDone)
+                    {
+                        Debug.LogWarning(hit.collider);
+                        items.Add(hit.collider.gameObject);
+                        hit.collider.gameObject.GetComponent<Item>().StartAnim();
+                    }
+                    else if (hit.collider.name == "fener")
+                    {
+                        Debug.LogWarning(hit.collider);
+                        items.Add(hit.collider.gameObject);
+                        hit.collider.gameObject.GetComponent<Item>().StartAnim();
+                    }
                 }
                 else if (hit.collider.CompareTag("climb"))
                 {
@@ -136,6 +162,7 @@ public class Player : MonoBehaviour
                     {
                         noteStartTrans = note.transform.position;
                         noteStartTransS = note.transform.localScale;
+                        noteStartTransR = note.transform.rotation;
                         StartCoroutine(Note());
                         isNoteOn = true;
                     }
@@ -144,11 +171,15 @@ public class Player : MonoBehaviour
                         StartCoroutine(NoteBack());
                         isNoteOn = false;
                     }
+                }
+                if (hit.collider.CompareTag("door"))
+                {
 
                 }
+
             }
         }
-        
+
         if (Input.GetKeyUp(KeyCode.E))
         {
             climbingInput = false;
@@ -163,7 +194,7 @@ public class Player : MonoBehaviour
 
         }
 
-        if(Input.GetKeyUp(KeyCode.Space) && jumpCharges > 0)
+        if (Input.GetKeyUp(KeyCode.Space) && jumpCharges > 0)
         {
             Jump(1f);
         }
@@ -209,7 +240,7 @@ public class Player : MonoBehaviour
     {
         float t = 0;
 
-        if(items.Count == 2)
+        if (items.Count == 2)
         {
             Vector3 scaleMdiddleStart = items[0].transform.localScale;
             Vector3 scaleRightStart = items[1].transform.localScale;
@@ -217,14 +248,14 @@ public class Player : MonoBehaviour
             {
                 if (inventoryIndex == 0)
                 {
-                    SetItemTransformbyTransform(1, items[1].transform.position, Vector3.Lerp(scaleRightStart, Vector3.zero, t));
-                    SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[1].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[1].transform.localScale, t));
+                    //SetItemTransformbyTransform(1, items[1].transform.position, Vector3.Lerp(scaleRightStart, Vector3.zero, t), Quaternion.Lerp(items[1].transform.rotation, points[1].transform.rotation, t));
+                    //SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[1].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[1].transform.localScale, t));
                     nameText.text = items[1].GetComponent<Item>().itemName;
                 }
                 else if (inventoryIndex == -1)
                 {
-                    SetItemTransformbyTransform(1, Vector3.Lerp(items[1].transform.position, points[1].transform.position, t), Vector3.Lerp(scaleRightStart, points[1].transform.localScale, t));
-                    SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[0].transform.localScale, t));
+                    SetItemTransformbyTransform(1, Vector3.Lerp(items[1].transform.position, points[1].transform.position, t), Vector3.Lerp(scaleRightStart, points[1].transform.localScale, t), Quaternion.Lerp(items[1].transform.rotation, points[1].transform.rotation, t));
+                    SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[0].transform.localScale, t), Quaternion.Lerp(items[0].transform.rotation, points[0].transform.rotation, t));
                     nameText.text = items[0].GetComponent<Item>().itemName;
                 }
 
@@ -233,7 +264,7 @@ public class Player : MonoBehaviour
                 if (t < .4f)
                     t += Time.deltaTime;
                 else t = 1.01f;
-                    yield return null;
+                yield return null;
             }
             //if (inventoryIndex == 0)
             //{
@@ -259,25 +290,26 @@ public class Player : MonoBehaviour
                 item = items[0];
             }
         }
-        else if (items.Count == 3){
+        else if (items.Count == 3)
+        {
             Vector3 scaleMdiddleStart = items[0].transform.localScale;
             Vector3 scaleRightStart = items[1].transform.localScale;
             Vector3 scaleLeftStart = items[2].transform.localScale;
             while (t <= 1)
             {
-                SetItemTransformbyTransform(1, items[1].transform.position, Vector3.Lerp(scaleRightStart, Vector3.zero, t));
-                SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[1].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[1].transform.localScale, t));
-                SetItemTransformbyTransform(2, Vector3.Lerp(items[2].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleLeftStart, points[0].transform.localScale, t));
+                //SetItemTransformbyTransform(1, items[1].transform.position, Vector3.Lerp(scaleRightStart, Vector3.zero, t));
+                //SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[1].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[1].transform.localScale, t));
+                //SetItemTransformbyTransform(2, Vector3.Lerp(items[2].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleLeftStart, points[0].transform.localScale, t));
 
                 t += Time.deltaTime;
                 yield return null;
             }
             Debug.Log("Bitti");
             scaleRightStart = items[1].transform.localScale;
-            t = 0;  
+            t = 0;
             while (t <= 1)
             {
-                SetItemTransformbyTransform(1, points[2].transform.position, Vector3.Lerp(scaleRightStart, points[2].transform.localScale, t));
+                //SetItemTransformbyTransform(1, points[2].transform.position, Vector3.Lerp(scaleRightStart, points[2].transform.localScale, t));
 
                 t += Time.deltaTime;
                 yield return null;
@@ -296,7 +328,7 @@ public class Player : MonoBehaviour
         //        yield return null;
         //    }
         //}
-            
+
     }
 
     public IEnumerator MoveLeft()
@@ -311,20 +343,20 @@ public class Player : MonoBehaviour
             {
                 if (inventoryIndex == 0)
                 {
-                    SetItemTransformbyTransform(1, Vector3.Lerp(items[1].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleRightStart, points[0].transform.localScale, t));
-                    SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[2].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[2].transform.localScale, t));
+                    SetItemTransformbyTransform(1, Vector3.Lerp(items[1].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleRightStart, points[0].transform.localScale, t), Quaternion.Lerp(items[1].transform.rotation, points[0].transform.rotation, t));
+                    SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[2].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[2].transform.localScale, t), Quaternion.Lerp(items[0].transform.rotation, points[2].transform.rotation, t));
                     nameText.text = items[1].GetComponent<Item>().itemName;
                 }
-                else if( inventoryIndex == -1)
+                else if (inventoryIndex == -1)
                 {
-                    SetItemTransformbyTransform(1, Vector3.Lerp(items[1].transform.position, points[1].transform.position, t), Vector3.Lerp(scaleRightStart, points[1].transform.localScale, t));
-                    SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[0].transform.localScale, t));
+                    SetItemTransformbyTransform(1, Vector3.Lerp(items[1].transform.position, points[1].transform.position, t), Vector3.Lerp(scaleRightStart, points[1].transform.localScale, t), Quaternion.Lerp(items[1].transform.rotation, points[1].transform.rotation, t));
+                    SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[0].transform.localScale, t), Quaternion.Lerp(items[0].transform.rotation, points[0].transform.rotation, t));
                     nameText.text = items[0].GetComponent<Item>().itemName;
                 }
                 else if (inventoryIndex == 1)
                 {
-                    SetItemTransformbyTransform(1, Vector3.Lerp(items[1].transform.position, points[2].transform.position, t), Vector3.Lerp(scaleRightStart, points[2].transform.localScale, t));
-                    SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[0].transform.localScale, t));
+                    SetItemTransformbyTransform(1, Vector3.Lerp(items[1].transform.position, points[2].transform.position, t), Vector3.Lerp(scaleRightStart, points[2].transform.localScale, t), Quaternion.Lerp(items[1].transform.rotation, points[2].transform.rotation, t));
+                    SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[0].transform.localScale, t), Quaternion.Lerp(items[0].transform.rotation, points[0].transform.rotation, t));
                     nameText.text = items[0].GetComponent<Item>().itemName;
                 }
                 if (t < .4f)
@@ -342,9 +374,9 @@ public class Player : MonoBehaviour
             Vector3 scaleLeftStart = items[2].transform.localScale;
             while (t <= 1)
             {
-                SetItemTransformbyTransform(1, items[1].transform.position, Vector3.Lerp(scaleRightStart, Vector3.zero, t));
-                SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[1].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[1].transform.localScale, t));
-                SetItemTransformbyTransform(2, Vector3.Lerp(items[2].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleLeftStart, points[0].transform.localScale, t));
+                //SetItemTransformbyTransform(1, items[1].transform.position, Vector3.Lerp(scaleRightStart, Vector3.zero, t));
+                //SetItemTransformbyTransform(0, Vector3.Lerp(items[0].transform.position, points[1].transform.position, t), Vector3.Lerp(scaleMdiddleStart, points[1].transform.localScale, t));
+                //SetItemTransformbyTransform(2, Vector3.Lerp(items[2].transform.position, points[0].transform.position, t), Vector3.Lerp(scaleLeftStart, points[0].transform.localScale, t));
 
                 t += Time.deltaTime;
                 yield return null;
@@ -354,7 +386,7 @@ public class Player : MonoBehaviour
             t = 0;
             while (t <= 1)
             {
-                SetItemTransformbyTransform(1, points[2].transform.position, Vector3.Lerp(scaleRightStart, points[2].transform.localScale, t));
+                //SetItemTransformbyTransform(1, points[2].transform.position, Vector3.Lerp(scaleRightStart, points[2].transform.localScale, t));
 
                 t += Time.deltaTime;
                 yield return null;
@@ -398,16 +430,18 @@ public class Player : MonoBehaviour
         items[index].transform.rotation = points[index].transform.rotation;
     }
 
-    void SetItemTransformbyTransform(int index, Vector3 pos, Vector3 scale)
+    void SetItemTransformbyTransform(int index, Vector3 pos, Vector3 scale, Quaternion rotation)
     {
         items[index].transform.position = pos;
         items[index].transform.localScale = scale;
+        items[index].transform.rotation = rotation;
     }
 
-    void SetObjectTransformbyTransform(GameObject go, Vector3 pos, Vector3 scale)
+    void SetObjectTransformbyTransform(GameObject go, Vector3 pos, Vector3 scale, Quaternion rot)
     {
         go.transform.position = pos;
         go.transform.localScale = scale;
+        go.transform.rotation = rot;
     }
 
     void ApplyGravity()
@@ -439,7 +473,7 @@ public class Player : MonoBehaviour
         float t = 0f;
         while (t <= 1)
         {
-            SetObjectTransformbyTransform(note, Vector3.Lerp(note.transform.position, points[0].transform.position, t), Vector3.Lerp(note.transform.localScale, points[0].transform.localScale, t));
+            SetObjectTransformbyTransform(note, Vector3.Lerp(note.transform.position, noteGO.transform.position, t), Vector3.Lerp(note.transform.localScale, noteGO.transform.localScale, t), Quaternion.Lerp(note.transform.rotation, noteGO.transform.rotation, t));
             if (t < .4f)
                 t += Time.deltaTime;
             else t = 1.01f;
@@ -452,7 +486,7 @@ public class Player : MonoBehaviour
         float t = 0f;
         while (t <= 1)
         {
-            SetObjectTransformbyTransform(note, Vector3.Lerp(note.transform.position, noteStartTrans, t), Vector3.Lerp(note.transform.localScale, noteStartTransS, t));
+            SetObjectTransformbyTransform(note, Vector3.Lerp(note.transform.position, noteStartTrans, t), Vector3.Lerp(note.transform.localScale, noteStartTransS, t), Quaternion.Lerp(note.transform.rotation, noteStartTransR, t));
             if (t < .4f)
                 t += Time.deltaTime;
             else t = 1.01f;
@@ -464,13 +498,17 @@ public class Player : MonoBehaviour
     {
         Debug.LogWarning("ah");
         hits = Physics.BoxCastAll(boxCollider.bounds.center, boxCollider.bounds.size, transform.forward, transform.rotation, 1f);
+        GetComponent<AudioSource>().Play();
+        meshR.material = greenM;
         foreach (RaycastHit hit in hits)
         {
-                Debug.Log(hit.collider);
-            if (hit.collider.CompareTag("door"))
+            Debug.Log(hit.collider);
+            if (hit.collider.CompareTag("door") && puzlleDone)
             {
-                Debug.Log(hit.collider);
+                Debug.Log("ANNEN" + hit.collider);
                 StartCoroutine(UseItemVisual());
+                GameObject.Find("Metal Kapı (5)").GetComponent<MoveDoor>().MoveDoorX();
+                GameObject.Find("Metal Kapı (4)").GetComponent<MoveDoor>().MoveDoorX();
             }
         }
     }
@@ -484,7 +522,7 @@ public class Player : MonoBehaviour
 
     public void TurnOnItems()
     {
-        foreach(GameObject go in items)
+        foreach (GameObject go in items)
         {
             go.SetActive(true);
         }

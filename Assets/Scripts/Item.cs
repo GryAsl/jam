@@ -15,6 +15,7 @@ public class Item : MonoBehaviour
     {
         StartCoroutine(Anim());
         GetComponent<MeshCollider>().enabled = false;
+        GetComponent<AudioSource>().Play();
 
     }
 
@@ -24,7 +25,7 @@ public class Item : MonoBehaviour
         while (t <= 1)
         {
             transform.position = Vector3.Lerp(startLoc, GameObject.Find("Player").gameObject.transform.position, t * .75f);
-            transform.localScale = new Vector3(Mathf.Lerp(1, 0, t), Mathf.Lerp(1, 0, t), Mathf.Lerp(1, 0, t));
+            transform.localScale = new Vector3(Mathf.Lerp(transform.localScale.x, 0, t), Mathf.Lerp(transform.localScale.y, 0, t), Mathf.Lerp(transform.localScale.z, 0, t));
             t += Time.deltaTime;
             yield return null;
         }

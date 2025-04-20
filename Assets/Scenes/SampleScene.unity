@@ -5238,7 +5238,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -500, y: -500}
+  m_SizeDelta: {x: -300, y: -300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1409215122
 MonoBehaviour:
@@ -5260,7 +5260,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'LOREM IPSUM LOREM IPSUM LOREM IPSUM LOREM IPSUM '
+  m_text: In the year 2030 a corporation named Angel Corp released their newest technology
+    called Resurrection. It was machine that can separate the soul from the body
+    and preserve both until they need to be combined once again. 10 successful years
+    later the riots began. The riots were caused by the people of God they were in
+    the belief that this was blasphemy and should be destroyed. Corp was abandoned.
+    Bodies and souls that were stored were left behind. Until the year 2081.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6458,6 +6463,7 @@ MonoBehaviour:
   go: {fileID: 454197282}
   rotate: 0
   rot: {x: 0, y: 0, z: 0}
+  anan: 0
 --- !u!1 &1847293597
 GameObject:
   m_ObjectHideFlags: 0

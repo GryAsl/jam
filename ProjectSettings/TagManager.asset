@@ -8,6 +8,7 @@ TagManager:
   - climb
   - note
   - door
+  - puzzle
   layers:
   - Default
   - TransparentFX

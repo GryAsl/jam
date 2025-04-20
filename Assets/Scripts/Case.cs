@@ -20,6 +20,7 @@ public class Case : MonoBehaviour
         {
             StartCoroutine(Turn());
             rotate = false;
+            GetComponent<AudioSource>().Play();
         }
     }
 

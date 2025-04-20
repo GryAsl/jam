@@ -24,7 +24,6 @@ public class GroundCheck : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.LogWarning("allah");
         GameObject.Find("Player").GetComponent<Player>().isGrounded = false;
     }
 }

@@ -44,7 +44,7 @@ public class UIManager : MonoBehaviour
 
     public void StartGame()
     {
-        //Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
         StartCoroutine(OpenCanvas(GameCanvas));
         StartCoroutine(CloseCanvas(MainCanvas));
@@ -181,20 +181,34 @@ public class UIManager : MonoBehaviour
         passwordText += "9";
         password.text = passwordText;
     }
+    public void Zero()
+    {
+        passwordText += "0";
+        password.text = passwordText;
+    }
 
     public void TryPassword()
     {
-        if(passwordText == "3131")
+        if(passwordText == "2206")
         {
             password.color = Color.green;
             Invoke("TurnOffPasswordUI", 1f);
+            GameObject.Find("kasa2").GetComponent<Case>().rotate = true;
         }
     }
 
     void TurnOffPasswordUI()
     {
+        Cursor.visible = false;
         StartCoroutine(OpenCanvas(GameCanvas));
         StartCoroutine(CloseCanvas(PasswordCanvas));
+    }
+
+    public void TurnOnPasswordUI()
+    {
+        Cursor.visible = true;
+        StartCoroutine(OpenCanvas(PasswordCanvas));
+        StartCoroutine(CloseCanvas(GameCanvas));
     }
 
     IEnumerator StoryTelling()
@@ -229,7 +243,7 @@ public class UIManager : MonoBehaviour
 
             yield return new WaitForFixedUpdate();
         }
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(10f);
         t = 0;
         while (t <= 1)
         {
