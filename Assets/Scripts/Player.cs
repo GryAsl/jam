@@ -62,6 +62,9 @@ public class Player : MonoBehaviour
     public MeshRenderer meshR;
     public Material greenM;
 
+    public GameObject postPorrrrr;
+    public GameObject glass;
+
 
 
 
@@ -76,7 +79,21 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            Debug.Log("zort");
+            glass.GetComponent<BoxCollider>().enabled = false;
+            postPorrrrr.SetActive(true);
 
+        }
+
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            GameObject.Find("myDoor2").GetComponent<MeshDestroy>().DestroyMesh();
+            GameObject.Find("myDoor2.1").GetComponent<MeshDestroy>().DestroyMesh();
+            GameObject.Find("myDoor2.2").GetComponent<MeshDestroy>().DestroyMesh();
+            GameObject.Find("myDoor2.3").GetComponent<MeshDestroy>().DestroyMesh();
+        }
 
         HandleMovementInput();
         if (gm.isInventoryOn)
@@ -119,7 +136,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E)) //Etkilisime gecme
         {
-            hits = Physics.BoxCastAll(boxCollider.bounds.center, boxCollider.bounds.size, transform.forward, transform.rotation, .8f);
+            hits = Physics.BoxCastAll(boxCollider.bounds.center, boxCollider.bounds.size * 1.5f, transform.forward, transform.rotation, 2f);
             foreach (RaycastHit hit in hits)
             {
                 if (hit.collider.CompareTag("puzzle"))
@@ -133,22 +150,7 @@ public class Player : MonoBehaviour
                         return;
                     }
                 }
-                if (hit.collider.CompareTag("item"))
-                {
-                    if (puzlleDone)
-                    {
-                        Debug.LogWarning(hit.collider);
-                        items.Add(hit.collider.gameObject);
-                        hit.collider.gameObject.GetComponent<Item>().StartAnim();
-                    }
-                    else if (hit.collider.name == "fener")
-                    {
-                        Debug.LogWarning(hit.collider);
-                        items.Add(hit.collider.gameObject);
-                        hit.collider.gameObject.GetComponent<Item>().StartAnim();
-                    }
-                }
-                else if (hit.collider.CompareTag("climb"))
+                if (hit.collider.CompareTag("climb"))
                 {
                     Debug.Log(hit.collider);
                     climbingInput = true; //Bunu bi ara GetKey ile yapmam lazim
@@ -170,6 +172,29 @@ public class Player : MonoBehaviour
                         StartCoroutine(NoteBack());
                         isNoteOn = false;
                     }
+                    break;
+                }
+                else if (hit.collider.CompareTag("item"))
+                {
+                    Debug.LogWarning(hit.collider.GetComponent<Item>().itemName);
+                    if (puzlleDone)
+                    {
+                        
+                        items.Add(hit.collider.gameObject);
+                        hit.collider.gameObject.GetComponent<Item>().StartAnim();
+                    }
+                    else if (hit.collider.name == "fener")
+                    {
+                        Debug.LogWarning(hit.collider);
+                        items.Add(hit.collider.gameObject);
+                        hit.collider.gameObject.GetComponent<Item>().StartAnim();
+                    }
+                    else if (hit.collider.GetComponent<Item>().itemName == "Wrench")
+                    {
+                        Debug.LogWarning(hit.collider);
+                        items.Add(hit.collider.gameObject);
+                        hit.collider.gameObject.GetComponent<Item>().StartAnim();
+                    }
                 }
                 if (hit.collider.CompareTag("door"))
                 {
@@ -178,15 +203,17 @@ public class Player : MonoBehaviour
                 if (hit.collider.CompareTag("platform"))
                 {
                     Debug.Log("platform");
+                    GetComponent<MoveObjects>().ToggleObject(hit.collider.gameObject);
+                    break;
                 }
 
             }
         }
 
-        if (Input.GetKeyUp(KeyCode.E))
-        {
-            climbingInput = false;
-        }
+        //if (Input.GetKeyUp(KeyCode.E))
+        //{
+        //    climbingInput = false;
+        //}
 
         if (Input.GetKeyDown(KeyCode.I))
         {
@@ -428,9 +455,18 @@ public class Player : MonoBehaviour
     void SetItemTransform(int index)
     {
         Debug.Log(index);
-        items[index].transform.position = points[index].transform.position;
-        items[index].transform.localScale = points[index].transform.localScale;
-        items[index].transform.rotation = points[index].transform.rotation;
+        if (items[index].GetComponent<Item>().itemName == "Wrench")
+        {
+            items[index].transform.position = points[index].transform.position;
+            items[index].transform.localScale = new Vector3(.3f,.3f,.3f);
+            items[index].transform.rotation = points[index].transform.rotation;
+        }
+        else
+        {
+            items[index].transform.position = points[index].transform.position;
+            items[index].transform.localScale = points[index].transform.localScale;
+            items[index].transform.rotation = points[index].transform.rotation;
+        }
     }
 
     void SetItemTransformbyTransform(int index, Vector3 pos, Vector3 scale, Quaternion rotation)
@@ -500,7 +536,7 @@ public class Player : MonoBehaviour
     public void UseItem()
     {
         Debug.LogWarning("ah");
-        hits = Physics.BoxCastAll(boxCollider.bounds.center, boxCollider.bounds.size, transform.forward, transform.rotation, 1f);
+        hits = Physics.BoxCastAll(boxCollider.bounds.center, boxCollider.bounds.size * 2f, transform.forward, transform.rotation, 2f);
         GetComponent<AudioSource>().Play();
         meshR.material = greenM;
         foreach (RaycastHit hit in hits)
@@ -508,10 +544,12 @@ public class Player : MonoBehaviour
             Debug.Log(hit.collider);
             if (hit.collider.CompareTag("door") && puzlleDone)
             {
-                Debug.Log("ANNEN" + hit.collider);
+                Debug.Log("door: " + hit.collider);
                 StartCoroutine(UseItemVisual());
-                GameObject.Find("Metal Kapı (5)").GetComponent<MoveDoor>().MoveDoorX();
-                GameObject.Find("Metal Kapı (4)").GetComponent<MoveDoor>().MoveDoorX();
+                //GameObject.Find("Metal Kapı (5)").GetComponent<MoveDoor>().MoveDoorX();
+                //GameObject.Find("Metal Kapı (4)").GetComponent<MoveDoor>().MoveDoorX();
+                GameObject.Find("myDoor").GetComponent<MeshDestroy>().DestroyMesh();
+
             }
         }
     }
@@ -520,7 +558,7 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(.5f);
         gm.ToggleInventory();
-
+        items.Clear();
     }
 
     public void TurnOnItems()

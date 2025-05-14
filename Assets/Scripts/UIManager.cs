@@ -243,7 +243,7 @@ public class UIManager : MonoBehaviour
 
             yield return new WaitForFixedUpdate();
         }
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(.1f); // BUNU 10 YAPMAN LAZIM
         t = 0;
         while (t <= 1)
         {
@@ -256,7 +256,7 @@ public class UIManager : MonoBehaviour
 
         t = 0f;
         float lastA = 1f;
-        float waitTime = .05f;
+        float waitTime = .03f;
         Color col = Color.black;
         while (t <= .55f)
         {
@@ -272,7 +272,7 @@ public class UIManager : MonoBehaviour
         Debug.LogWarning("1: " + lastA);
         while (t <= .95f)
         {
-            t += .008f;
+            t += .01f;
             col.a = Mathf.Lerp(lastA, 1f, t);
             startBackgroundImage.color = col;
             Debug.Log("1: " + col);
@@ -284,7 +284,7 @@ public class UIManager : MonoBehaviour
         Debug.LogWarning("2: " + lastA);
         while (t <= .85f)
         {
-            t += .005f;
+            t += .008f;
             col.a = Mathf.Lerp(lastA, 0f, t);
             startBackgroundImage.color = col;
             Debug.Log(col);
@@ -296,7 +296,7 @@ public class UIManager : MonoBehaviour
         Debug.LogWarning("3: " + lastA);
         while (t <= .85f)
         {
-            t += .01f;
+            t += .012f;
             col.a = Mathf.Lerp(lastA, 1f, t);
             startBackgroundImage.color = col;
             Debug.Log(col);
@@ -308,14 +308,14 @@ public class UIManager : MonoBehaviour
         Debug.LogWarning("4: " + lastA);
         while (t <= 1f)
         {
-            t += .01f;
+            t += .012f;
             col.a = Mathf.Lerp(lastA, 0f, t);
             startBackgroundImage.color = col;
             Debug.Log(col);
             yield return new WaitForFixedUpdate();
         }
 
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.1f);
         GameObject.Find("kapsül2").GetComponent<Case>().rotate = true;
     }
 
