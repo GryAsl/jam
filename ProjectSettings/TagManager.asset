@@ -9,6 +9,7 @@ TagManager:
   - note
   - door
   - puzzle
+  - platform
   layers:
   - Default
   - TransparentFX

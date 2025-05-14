@@ -26,9 +26,9 @@ public class Player : MonoBehaviour
     CharacterController controller;
     Vector3 move;
     Vector3 input;
-    public bool climbingInput;
+    bool climbingInput;
     public Transform groundCheck;
-    public Vector3 yVelocity;
+    Vector3 yVelocity;
     public bool isGrounded;
     public float jumpHeight;
     public int jumpCharges;
@@ -117,12 +117,11 @@ public class Player : MonoBehaviour
             GetComponent<Headbob>()._frequency = 10f;
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E)) //Etkilisime gecme
         {
             hits = Physics.BoxCastAll(boxCollider.bounds.center, boxCollider.bounds.size, transform.forward, transform.rotation, .8f);
             foreach (RaycastHit hit in hits)
             {
-                Debug.Log("ZA: " + hit.collider.name);
                 if (hit.collider.CompareTag("puzzle"))
                 {
                     if (!puzlleDone)
@@ -175,6 +174,10 @@ public class Player : MonoBehaviour
                 if (hit.collider.CompareTag("door"))
                 {
 
+                }
+                if (hit.collider.CompareTag("platform"))
+                {
+                    Debug.Log("platform");
                 }
 
             }
