@@ -16,7 +16,7 @@ public class GroundCheck : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.LogWarning("onGround: " + other );
+        Debug.Log("onGround: " + other );
         GameObject.Find("Player").GetComponent<Player>().isGrounded = true;
         GameObject.Find("Player").GetComponent<Player>().jumpCharges = 1;
     }

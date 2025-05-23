@@ -25,12 +25,16 @@ public class UIManager : MonoBehaviour
     public string passwordText;
     public GameObject storyPlane;
 
+    public Camera MenuCam;
+    public Camera PlayCam;
+
     void Start()
     {
         gm = gameObject.GetComponent<GameManager>();
         currentCanvas = MainCanvas;
         storyPlane = GameObject.Find("Story");
         storyPlane.transform.localPosition = new Vector3(storyPlane.transform.localPosition.x, -.55f, storyPlane.transform.localPosition.z);
+        PlayCam.enabled = false;
     }
 
     private void Update()
@@ -50,6 +54,8 @@ public class UIManager : MonoBehaviour
         StartCoroutine(CloseCanvas(MainCanvas));
         StartCoroutine(StartGameUI());
         gm.StartGame();
+        MenuCam.enabled = false;
+        PlayCam.enabled = true;
     }
 
     public void OpenSettingsMenu()
