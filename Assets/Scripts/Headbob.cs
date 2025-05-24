@@ -11,8 +11,10 @@ public class Headbob : MonoBehaviour
     public float amplitude;
     public float amplitudeNormal;
     public float amplitudeRun;
+    public float amplitudeGhost;
 
     public float _toggleSpeed = 3.0f;
+    public float normalToggleSpeed = 3.0f;
     private Vector3 _startPos;
     private CharacterController _controller;
 
@@ -41,6 +43,8 @@ public class Headbob : MonoBehaviour
     }
     private void CheckMotion()
     {
+        Debug.Log("1");
+
         float speed = new Vector3(_controller.velocity.x, 0, _controller.velocity.z).magnitude;
         if (speed < _toggleSpeed) return;
         if (!GetComponent<Player>().isGrounded) return;

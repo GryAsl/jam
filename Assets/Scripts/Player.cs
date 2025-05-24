@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     public float speedMultiplier;
     public float runSpeed;
     public float walkSpeed;
+    public float ghostSpeed;
     public float maxSpeed;
     CharacterController controller;
     Vector3 move;
@@ -64,6 +65,8 @@ public class Player : MonoBehaviour
 
     public GameObject postPorrrrr;
     public GameObject glass;
+    public GameObject carKey;
+    public bool ghostMode;
 
 
 
@@ -79,12 +82,20 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(KeyCode.X)) // ruh 
         {
-            Debug.Log("zort");
-            glass.GetComponent<BoxCollider>().enabled = false;
-            postPorrrrr.SetActive(true);
+            if (!ghostMode) GhostMode();
+            else GhostModeOff();
+            ghostMode = !ghostMode;
+        }
 
+        if (ghostMode) //GHOST
+        {
+            Debug.Log(Vector3.Distance(transform.position, carKey.transform.position));
+            if(Vector3.Distance(transform.position, carKey.transform.position) < 1.5f)
+            {
+                carKey.GetComponent<CarKey>().TriggerKey();
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.O))
@@ -112,6 +123,31 @@ public class Player : MonoBehaviour
         controller.Move(move * Time.deltaTime);
     }
 
+    void GhostMode()
+    {
+        Debug.Log("zort");
+        carKey = GameObject.Find("carkey");
+        glass.GetComponent<BoxCollider>().enabled = false;
+        postPorrrrr.SetActive(true);
+        GetComponent<Headbob>().amplitude = GetComponent<Headbob>().amplitudeGhost;
+        GetComponent<Headbob>()._frequency = 3f;
+        GetComponent<Headbob>()._toggleSpeed = 0f;
+        StartCoroutine(IncreaseFOVRuh());
+        maxSpeed = ghostSpeed;
+    }
+
+    void GhostModeOff()
+    {
+        Debug.Log("zort");
+        glass.GetComponent<BoxCollider>().enabled = true;
+        postPorrrrr.SetActive(false);
+        GetComponent<Headbob>().amplitude = GetComponent<Headbob>().amplitudeNormal;
+        GetComponent<Headbob>()._frequency = 3f;
+        GetComponent<Headbob>()._toggleSpeed = GetComponent<Headbob>().normalToggleSpeed;
+        StartCoroutine(DecreaseFOV());
+        maxSpeed = walkSpeed;
+    }
+
     void HandleMovementInput()
     {
         input = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
@@ -124,7 +160,7 @@ public class Player : MonoBehaviour
             maxSpeed = runSpeed;
             StartCoroutine(IncreaseFOV());
             GetComponent<Headbob>().amplitude = GetComponent<Headbob>().amplitudeRun;
-            GetComponent<Headbob>()._frequency = 15f;
+            GetComponent<Headbob>()._frequency = 22f;
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
@@ -261,6 +297,24 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.LeftShift))
                 yield break;
+            cam.fieldOfView -= 50f * Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    IEnumerator IncreaseFOVRuh()
+    {
+        while (cam.fieldOfView <= maxFOV)
+        {
+            cam.fieldOfView += 50f * Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    IEnumerator DecreaseFOVRuh()
+    {
+        while (cam.fieldOfView >= normalFOV)
+        {
             cam.fieldOfView -= 50f * Time.deltaTime;
             yield return null;
         }

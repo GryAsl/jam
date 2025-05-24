@@ -28,6 +28,7 @@ public class UIManager : MonoBehaviour
     public Camera MenuCam;
     public Camera PlayCam;
 
+
     void Start()
     {
         gm = gameObject.GetComponent<GameManager>();
@@ -241,24 +242,24 @@ public class UIManager : MonoBehaviour
     IEnumerator StartGameUI()
     {
         float t = 0f;
-        yield return new WaitForSeconds(1f);
-        while (t <= 1)
-        {
-            t += .02f;
-            bigStoryText.alpha = Mathf.Lerp(0f, 1f, t);
+        //yield return new WaitForSeconds(1f);
+        //while (t <= 1)
+        //{
+        //    t += .02f;
+        //    bigStoryText.alpha = Mathf.Lerp(0f, 1f, t);
 
-            yield return new WaitForFixedUpdate();
-        }
-        yield return new WaitForSeconds(.1f); // BUNU 10 YAPMAN LAZIM
-        t = 0;
-        while (t <= 1)
-        {
-            t += .05f;
-            bigStoryText.alpha = Mathf.Lerp(1f, 0f, t);
+        //    yield return new WaitForFixedUpdate();
+        //}
+        //yield return new WaitForSeconds(.1f); // BUNU 10 YAPMAN LAZIM
+        //t = 0;
+        //while (t <= 1)
+        //{
+        //    t += .05f;
+        //    bigStoryText.alpha = Mathf.Lerp(1f, 0f, t);
 
-            yield return new WaitForFixedUpdate();
-        }
-        yield return new WaitForSeconds(1f);
+        //    yield return new WaitForFixedUpdate();
+        //}
+        //yield return new WaitForSeconds(1f);
 
         t = 0f;
         float lastA = 1f;
@@ -266,7 +267,7 @@ public class UIManager : MonoBehaviour
         Color col = Color.black;
         while (t <= .55f)
         {
-            t += .0025f;
+            t += .003f;
             col.a = Mathf.Lerp(lastA, 0f, t);
             startBackgroundImage.color = col;
             Debug.Log("0: " + col);
@@ -278,7 +279,7 @@ public class UIManager : MonoBehaviour
         Debug.LogWarning("1: " + lastA);
         while (t <= .95f)
         {
-            t += .01f;
+            t += .015f;
             col.a = Mathf.Lerp(lastA, 1f, t);
             startBackgroundImage.color = col;
             Debug.Log("1: " + col);
@@ -290,7 +291,7 @@ public class UIManager : MonoBehaviour
         Debug.LogWarning("2: " + lastA);
         while (t <= .85f)
         {
-            t += .008f;
+            t += .01f;
             col.a = Mathf.Lerp(lastA, 0f, t);
             startBackgroundImage.color = col;
             Debug.Log(col);
@@ -302,7 +303,7 @@ public class UIManager : MonoBehaviour
         Debug.LogWarning("3: " + lastA);
         while (t <= .85f)
         {
-            t += .012f;
+            t += .015f;
             col.a = Mathf.Lerp(lastA, 1f, t);
             startBackgroundImage.color = col;
             Debug.Log(col);
@@ -311,10 +312,11 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         lastA = col.a;
         t = 0;
+        GameObject.Find("kapsül2").GetComponent<Case>().rotate = true;
         Debug.LogWarning("4: " + lastA);
         while (t <= 1f)
         {
-            t += .012f;
+            t += .015f;
             col.a = Mathf.Lerp(lastA, 0f, t);
             startBackgroundImage.color = col;
             Debug.Log(col);
@@ -322,12 +324,37 @@ public class UIManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(.1f);
-        GameObject.Find("kapsül2").GetComponent<Case>().rotate = true;
+        
     }
 
     public void UseItem()
     {
         Debug.LogWarning("X");
         GameObject.Find("Player").GetComponent<Player>().UseItem();
+    }
+
+
+    public IEnumerator TutOn(TextMeshProUGUI tutText, Image tutImage)
+    {
+        float t = 0f;
+        Color col = tutImage.color;
+        while (t <= 1)
+        {
+            t += Time.fixedDeltaTime;
+            tutText.alpha += .01f;
+            col.a += .01f;
+            tutImage.color = col;
+            yield return new WaitForFixedUpdate();
+        }
+        yield return new WaitForSecondsRealtime(3f);
+        while (t >= 0)
+        {
+            t -= Time.fixedDeltaTime;
+            col.a -= .01f;
+            tutText.alpha -= .01f;
+            tutImage.color = col;
+            yield return new WaitForFixedUpdate();
+        }
+
     }
 }

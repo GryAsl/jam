@@ -20,6 +20,12 @@ public class GroundCheck : MonoBehaviour
         GameObject.Find("Player").GetComponent<Player>().isGrounded = true;
         GameObject.Find("Player").GetComponent<Player>().jumpCharges = 1;
     }
+    private void OnTriggerStay(Collider other)
+    {
+        Debug.Log("onGround: " + other);
+        GameObject.Find("Player").GetComponent<Player>().isGrounded = true;
+        GameObject.Find("Player").GetComponent<Player>().jumpCharges = 1;
+    }
 
 
     private void OnTriggerExit(Collider other)
