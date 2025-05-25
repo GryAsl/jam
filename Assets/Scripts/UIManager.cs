@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
 
     public Camera MenuCam;
     public Camera PlayCam;
+    public TextMeshProUGUI subText;
 
 
     void Start()
@@ -353,6 +354,31 @@ public class UIManager : MonoBehaviour
             col.a -= .01f;
             tutText.alpha -= .01f;
             tutImage.color = col;
+            yield return new WaitForFixedUpdate();
+        }
+
+    }
+
+    public IEnumerator SubOn(string text, float time)
+    {
+        float t = 0f;
+        subText.text = text;
+        //Color col = subImage.color;
+        while (t <= 1)
+        {
+            t += Time.fixedDeltaTime;
+            subText.alpha += .01f;
+            //col.a += .01f;
+            //subImage.color = col;
+            yield return new WaitForFixedUpdate();
+        }
+        yield return new WaitForSecondsRealtime(time);
+        while (t >= 0)
+        {
+            t -= Time.fixedDeltaTime;
+            subText.alpha -= .01f;
+            //col.a -= .01f;
+            //subImage.color = col;
             yield return new WaitForFixedUpdate();
         }
 
