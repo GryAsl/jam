@@ -18,7 +18,7 @@ public class InspectItem : MonoBehaviour
     public void StartInspect(GameObject go, Vector3 targetPosition_, Vector3 targetRotation_)
     {
         item = go;
-        item.GetComponent<MeshCollider>().enabled = false;
+        item.GetComponent<BoxCollider>().enabled = false;
 
         startPos = item.transform.position;
         startRot = item.transform.rotation;
@@ -57,10 +57,10 @@ public class InspectItem : MonoBehaviour
         // Ýnceleme sýrasýnda mouse ile döndür
         else if (inspecting && arrived)
         {
-            float mouseX = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime;
-            float mouseY = -Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
-            item.transform.Rotate(Vector3.up, mouseX, Space.World);
-            item.transform.Rotate(Vector3.right, mouseY, Space.World);
+            float mouseX = -Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime;
+            float mouseY = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
+            item.transform.Rotate(Vector3.up, mouseX, Space.Self);
+            item.transform.Rotate(Vector3.right, mouseY, Space.Self);
         }
         // Geri dönüþ sýrasýnda
         else if (returning)

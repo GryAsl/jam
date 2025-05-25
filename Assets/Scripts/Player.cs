@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -43,6 +44,8 @@ public class Player : MonoBehaviour
     public RaycastHit[] hits;
     public List<GameObject> items = new();
     public GameObject item;
+    public InspectItem inspect;
+    public GameObject inspectPoint;
 
     [Header("Other")]
     public GameObject flashlight;
@@ -212,22 +215,24 @@ public class Player : MonoBehaviour
                 }
                 else if (hit.collider.CompareTag("item"))
                 {
-                    Debug.LogWarning(hit.collider.GetComponent<Item>().itemName);
+                    Debug.LogWarning(hit.collider.gameObject);
                     if (puzlleDone)
                     {
-                        
                         items.Add(hit.collider.gameObject);
                         hit.collider.gameObject.GetComponent<Item>().StartAnim();
                     }
+                    else if (hit.collider.name == "alyans")
+                    {
+                        inspect.StartInspect(hit.collider.gameObject, inspectPoint.transform.position, inspectPoint.transform.rotation.eulerAngles);
+                        Cursor.visible = true;
+                    }
                     else if (hit.collider.name == "fener")
                     {
-                        Debug.LogWarning(hit.collider);
                         items.Add(hit.collider.gameObject);
                         hit.collider.gameObject.GetComponent<Item>().StartAnim();
                     }
                     else if (hit.collider.GetComponent<Item>().itemName == "Wrench")
                     {
-                        Debug.LogWarning(hit.collider);
                         items.Add(hit.collider.gameObject);
                         hit.collider.gameObject.GetComponent<Item>().StartAnim();
                     }
