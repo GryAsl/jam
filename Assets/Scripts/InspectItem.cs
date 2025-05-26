@@ -1,10 +1,11 @@
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class InspectItem : MonoBehaviour
 {
-    public GameObject item;
-    public Vector3 targetPosition;
-    public Vector3 targetRotation;
+    private GameObject item;
+    private Vector3 targetPosition;
+    private Vector3 targetRotation;
     public float moveSpeed = 5f;
     public float rotateSpeed = 150f;
 
