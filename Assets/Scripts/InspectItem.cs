@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(BoxCollider))]
 public class InspectItem : MonoBehaviour
 {
     private GameObject item;
