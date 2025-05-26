@@ -15,8 +15,18 @@ public class InspectItem : MonoBehaviour
     private Vector3 startPos;
     private Quaternion startRot;
 
+    public string text;
+    
+    
+
     public void StartInspect(GameObject go, Vector3 targetPosition_, Vector3 targetRotation_)
     {
+        if(gameObject.TryGetComponent<AudioSource>(out var audioSource))
+        {
+            audioSource.Play();
+            StartCoroutine(GameObject.Find("GameManager").GetComponent<UIManager>().SubOn(text, audioSource.time));
+        }
+
         item = go;
         item.GetComponent<BoxCollider>().enabled = false;
 
