@@ -26,7 +26,7 @@ public class InspectItem : MonoBehaviour
         if(gameObject.TryGetComponent<AudioSource>(out var audioSource))
         {
             audioSource.Play();
-            StartCoroutine(GameObject.Find("GameManager").GetComponent<UIManager>().SubOn(text, audioSource.time));
+            StartCoroutine(GameObject.Find("GameManager").GetComponent<UIManager>().SubOn(text, audioSource.clip.length));
         }
 
         item = go;
@@ -41,6 +41,16 @@ public class InspectItem : MonoBehaviour
         inspecting = true;
         arrived = false;
         returning = false;
+        Cursor.visible = true;
+    }
+
+    public void TextAndAudioOnly()
+    {
+        if (gameObject.TryGetComponent<AudioSource>(out var audioSource))
+        {
+            audioSource.Play();
+            StartCoroutine(GameObject.Find("GameManager").GetComponent<UIManager>().SubOn(text, audioSource.clip.length));
+        }
     }
 
     public void StopInspect()
@@ -48,11 +58,18 @@ public class InspectItem : MonoBehaviour
         inspecting = false;
         returning = true;
         arrived = false;
+        Cursor.visible = false;
     }
 
     void Update()
     {
         if (item == null) return;
+
+        if (Input.GetKeyDown(KeyCode.E) && arrived)
+        {
+            StopInspect();
+            return;
+        }
 
         // Ýleriye giderken
         if (inspecting && !arrived)

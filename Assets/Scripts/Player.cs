@@ -70,7 +70,8 @@ public class Player : MonoBehaviour
     public GameObject glass;
     public GameObject carKey;
     public bool ghostMode;
-
+    public GameObject karakter;
+    public GameObject karakter2;
 
 
 
@@ -92,14 +93,14 @@ public class Player : MonoBehaviour
             ghostMode = !ghostMode;
         }
 
-        if (ghostMode) //GHOST
-        {
-            Debug.Log(Vector3.Distance(transform.position, carKey.transform.position));
-            if(Vector3.Distance(transform.position, carKey.transform.position) < 1.5f)
-            {
-                carKey.GetComponent<CarKey>().TriggerKey();
-            }
-        }
+        //if (ghostMode) //GHOST
+        //{
+        //    Debug.Log(Vector3.Distance(transform.position, carKey.transform.position));
+        //    if (Vector3.Distance(transform.position, carKey.transform.position) < 1.5f)
+        //    {
+        //        carKey.GetComponent<CarKey>().TriggerKey();
+        //    }
+        //}
 
         if (Input.GetKeyDown(KeyCode.O))
         {
@@ -137,6 +138,8 @@ public class Player : MonoBehaviour
         GetComponent<Headbob>()._toggleSpeed = 0f;
         StartCoroutine(IncreaseFOVRuh());
         maxSpeed = ghostSpeed;
+        karakter.SetActive(true);
+        karakter2.SetActive(true);
     }
 
     void GhostModeOff()
@@ -149,6 +152,8 @@ public class Player : MonoBehaviour
         GetComponent<Headbob>()._toggleSpeed = GetComponent<Headbob>().normalToggleSpeed;
         StartCoroutine(DecreaseFOV());
         maxSpeed = walkSpeed;
+        karakter.SetActive(false);
+        karakter2.SetActive(false);
     }
 
     void HandleMovementInput()
@@ -200,6 +205,7 @@ public class Player : MonoBehaviour
                     note = hit.collider.gameObject;
                     if (!isNoteOn)
                     {
+                        hit.collider.gameObject.GetComponent<InspectItem>().TextAndAudioOnly();
                         noteStartTrans = note.transform.position;
                         noteStartTransS = note.transform.localScale;
                         noteStartTransR = note.transform.rotation;
@@ -216,15 +222,34 @@ public class Player : MonoBehaviour
                 else if (hit.collider.CompareTag("item"))
                 {
                     Debug.LogWarning(hit.collider.gameObject);
-                    if (puzlleDone)
+                    if (puzlleDone && hit.collider.gameObject.name == "keycard")
                     {
                         items.Add(hit.collider.gameObject);
                         hit.collider.gameObject.GetComponent<Item>().StartAnim();
                     }
-                    else if (hit.collider.name == "alyans")
+                    else if(hit.collider.gameObject.TryGetComponent<InspectItem>(out var anan))
                     {
-                        inspect.StartInspect(hit.collider.gameObject, inspectPoint.transform.position, inspectPoint.transform.rotation.eulerAngles);
-                        Cursor.visible = true;
+                        anan.StartInspect(hit.collider.gameObject, inspectPoint.transform.position, inspectPoint.transform.rotation.eulerAngles);
+                    }
+                    //else if (hit.collider.name == "alyans")
+                    //{
+                    //    hit.collider.gameObject.GetComponent<InspectItem>().StartInspect(hit.collider.gameObject, inspectPoint.transform.position, inspectPoint.transform.rotation.eulerAngles);
+                    //    Cursor.visible = true;
+                    //}
+                    //else if (hit.collider.name == "Tie")
+                    //{
+                    //    inspect.StartInspect(hit.collider.gameObject, inspectPoint.transform.position, inspectPoint.transform.rotation.eulerAngles);
+                    //    Cursor.visible = true;
+                    //}
+                    //else if (hit.collider.name == "cup")
+                    //{
+                    //    inspect.StartInspect(hit.collider.gameObject, inspectPoint.transform.position, inspectPoint.transform.rotation.eulerAngles);
+                    //    Cursor.visible = true;
+                    //}
+                    else if (hit.collider.name == "keycard_kırmızı")
+                    {
+                        items.Add(hit.collider.gameObject);
+                        hit.collider.gameObject.GetComponent<Item>().StartAnim();
                     }
                     else if (hit.collider.name == "fener")
                     {
@@ -265,7 +290,7 @@ public class Player : MonoBehaviour
 
         }
 
-        if (Input.GetKeyUp(KeyCode.Space) && jumpCharges > 0)
+        if (Input.GetKeyUp(KeyCode.Space) && jumpCharges > 0 && !ghostMode)
         {
             Jump(1f);
         }
@@ -517,7 +542,7 @@ public class Player : MonoBehaviour
         if (items[index].GetComponent<Item>().itemName == "Wrench")
         {
             items[index].transform.position = points[index].transform.position;
-            items[index].transform.localScale = new Vector3(.3f,.3f,.3f);
+            items[index].transform.localScale = new Vector3(.3f, .3f, .3f);
             items[index].transform.rotation = points[index].transform.rotation;
         }
         else
@@ -544,16 +569,35 @@ public class Player : MonoBehaviour
 
     void ApplyGravity()
     {
-        if (climbingInput)
+        if (ghostMode)
         {
-            Jump(.31f);
+            if (Input.GetKey(KeyCode.Space))
+            {
+                Jump(.31f);
+            }
+            else yVelocity.y = 0f;
+            if (Input.GetKey(KeyCode.LeftControl))
+            {
+                gravity = normalGravity * 5f;
+                yVelocity.y += gravity * -2f * Time.deltaTime;
+                yVelocity.y = Mathf.Clamp(yVelocity.y, -normalGravity, 999);
+                controller.Move(yVelocity * Time.deltaTime);
+            }
         }
         else
         {
-            gravity = normalGravity;
-            yVelocity.y += gravity * -2f * Time.deltaTime;
-            yVelocity.y = Mathf.Clamp(yVelocity.y, -normalGravity, 999);
-            controller.Move(yVelocity * Time.deltaTime);
+
+            if (climbingInput)
+            {
+                Jump(.31f);
+            }
+            else
+            {
+                gravity = normalGravity;
+                yVelocity.y += gravity * -2f * Time.deltaTime;
+                yVelocity.y = Mathf.Clamp(yVelocity.y, -normalGravity, 999);
+                controller.Move(yVelocity * Time.deltaTime);
+            }
         }
 
     }

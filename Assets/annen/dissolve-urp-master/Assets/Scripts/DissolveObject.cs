@@ -9,6 +9,8 @@ public class DissolveObject : MonoBehaviour
     [SerializeField] private float objectHeight = 1.0f;
 
     private Material material;
+    public bool dissolve;
+    public KeyCode keyCode;
 
     private void Awake()
     {
@@ -21,6 +23,15 @@ public class DissolveObject : MonoBehaviour
 
         //float height = transform.position.y;
         //height += Mathf.Sin(time) * (objectHeight / 2.0f);
+        if (Input.GetKeyDown(keyCode))
+        {
+            dissolve = true;
+            GetComponent<BoxCollider>().enabled = false;
+        }
+        if (dissolve)
+        {
+            objectHeight -= Time.deltaTime * 1.5f;
+        }
         SetHeight();
     }
 

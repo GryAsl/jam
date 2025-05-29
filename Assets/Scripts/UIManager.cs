@@ -28,6 +28,7 @@ public class UIManager : MonoBehaviour
     public Camera MenuCam;
     public Camera PlayCam;
     public TextMeshProUGUI subText;
+    public Image subImage;
 
 
     void Start()
@@ -35,7 +36,7 @@ public class UIManager : MonoBehaviour
         gm = gameObject.GetComponent<GameManager>();
         currentCanvas = MainCanvas;
         storyPlane = GameObject.Find("Story");
-        storyPlane.transform.localPosition = new Vector3(storyPlane.transform.localPosition.x, -.55f, storyPlane.transform.localPosition.z);
+        //storyPlane.transform.localPosition = new Vector3(storyPlane.transform.localPosition.x, -.55f, storyPlane.transform.localPosition.z);
         PlayCam.enabled = false;
     }
 
@@ -342,8 +343,8 @@ public class UIManager : MonoBehaviour
         while (t <= 1)
         {
             t += Time.fixedDeltaTime;
-            tutText.alpha += .01f;
-            col.a += .01f;
+            tutText.alpha += .02f;
+            col.a += .02f;
             tutImage.color = col;
             yield return new WaitForFixedUpdate();
         }
@@ -351,8 +352,8 @@ public class UIManager : MonoBehaviour
         while (t >= 0)
         {
             t -= Time.fixedDeltaTime;
-            col.a -= .01f;
-            tutText.alpha -= .01f;
+            col.a -= .02f;
+            tutText.alpha -= .02f;
             tutImage.color = col;
             yield return new WaitForFixedUpdate();
         }
@@ -361,26 +362,30 @@ public class UIManager : MonoBehaviour
 
     public IEnumerator SubOn(string text, float time)
     {
+        Debug.LogError("Baþlýyor");
         float t = 0f;
         subText.text = text;
-        //Color col = subImage.color;
+        Color col = subImage.color;
         while (t <= 1)
         {
+            Debug.LogWarning(subText.alpha);
             t += Time.fixedDeltaTime;
-            subText.alpha += .01f;
-            //col.a += .01f;
-            //subImage.color = col;
+            subText.alpha += .02f;
+            col.a += .02f;
+            subImage.color = col;
             yield return new WaitForFixedUpdate();
         }
-        yield return new WaitForSecondsRealtime(time);
+        yield return new WaitForSecondsRealtime(time - 2f);
         while (t >= 0)
         {
+            Debug.LogWarning(subText.alpha);
             t -= Time.fixedDeltaTime;
-            subText.alpha -= .01f;
-            //col.a -= .01f;
-            //subImage.color = col;
+            subText.alpha -= .02f;
+            col.a -= .02f;
+            subImage.color = col;
             yield return new WaitForFixedUpdate();
         }
+        Debug.LogError("Bitti");
 
     }
 }

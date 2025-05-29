@@ -35,7 +35,6 @@ public class CameraMoveSpline : MonoBehaviour
         Color col = Color.black;
         while (t <= 1f)
         {
-            Debug.LogWarning("1: " + t);
             t += .05f;
             col.a = Mathf.Lerp(0f, 1f, t);
             menuBackgroundImage.color = col;
@@ -45,14 +44,12 @@ public class CameraMoveSpline : MonoBehaviour
         firstOne = !firstOne;
         while (t >= 0f)
         {
-            Debug.LogWarning("2: " + t + " / " + col.a);
             t -= .025f;
             col.a = Mathf.Lerp(0f, 1f, t);
             menuBackgroundImage.color = col;
             yield return new WaitForFixedUpdate();
         }
         coroutineAlreadyStart = false;
-        Debug.LogWarning("3");
     }
 
 }

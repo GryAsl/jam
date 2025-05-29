@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class CarKey : MonoBehaviour
 {
@@ -29,6 +30,14 @@ public class CarKey : MonoBehaviour
         mat = mats[1];
         mat2 = mats[2];
         StartCoroutine(FlickerEmission());
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            TriggerKey();
+        }
     }
 
     IEnumerator FlickerEmission()
