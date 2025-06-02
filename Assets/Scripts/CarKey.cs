@@ -34,7 +34,7 @@ public class CarKey : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha5))
+        if (Vector3.Distance(GameObject.Find("Player").transform.position, transform.position) < 2f)
         {
             TriggerKey();
         }

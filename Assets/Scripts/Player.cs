@@ -46,6 +46,8 @@ public class Player : MonoBehaviour
     public GameObject item;
     public InspectItem inspect;
     public GameObject inspectPoint;
+    public bool key2;
+    public bool key3;
 
     [Header("Other")]
     public GameObject flashlight;
@@ -93,6 +95,7 @@ public class Player : MonoBehaviour
             ghostMode = !ghostMode;
         }
 
+
         //if (ghostMode) //GHOST
         //{
         //    Debug.Log(Vector3.Distance(transform.position, carKey.transform.position));
@@ -102,13 +105,7 @@ public class Player : MonoBehaviour
         //    }
         //}
 
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            GameObject.Find("myDoor2").GetComponent<MeshDestroy>().DestroyMesh();
-            GameObject.Find("myDoor2.1").GetComponent<MeshDestroy>().DestroyMesh();
-            GameObject.Find("myDoor2.2").GetComponent<MeshDestroy>().DestroyMesh();
-            GameObject.Find("myDoor2.3").GetComponent<MeshDestroy>().DestroyMesh();
-        }
+
 
         HandleMovementInput();
         if (gm.isInventoryOn)
@@ -250,6 +247,7 @@ public class Player : MonoBehaviour
                     {
                         items.Add(hit.collider.gameObject);
                         hit.collider.gameObject.GetComponent<Item>().StartAnim();
+                        key3 = true;
                     }
                     else if (hit.collider.name == "fener")
                     {
@@ -260,6 +258,7 @@ public class Player : MonoBehaviour
                     {
                         items.Add(hit.collider.gameObject);
                         hit.collider.gameObject.GetComponent<Item>().StartAnim();
+                        key2 = true;
                     }
                 }
                 if (hit.collider.CompareTag("door"))
@@ -638,23 +637,37 @@ public class Player : MonoBehaviour
 
     public void UseItem()
     {
-        Debug.LogWarning("ah");
-        hits = Physics.BoxCastAll(boxCollider.bounds.center, boxCollider.bounds.size * 2f, transform.forward, transform.rotation, 2f);
-        GetComponent<AudioSource>().Play();
-        meshR.material = greenM;
-        foreach (RaycastHit hit in hits)
+        if (key2)
         {
-            Debug.Log(hit.collider);
-            if (hit.collider.CompareTag("door") && puzlleDone)
+            Debug.LogWarning("ah2");
+            GameObject.Find("myDoor2").GetComponent<MeshDestroy>().DestroyMesh();
+            GameObject.Find("myDoor2.1").GetComponent<MeshDestroy>().DestroyMesh();
+            GameObject.Find("myDoor2.2").GetComponent<MeshDestroy>().DestroyMesh();
+            GameObject.Find("myDoor2.3").GetComponent<MeshDestroy>().DestroyMesh();
+            StartCoroutine(UseItemVisual());
+            GetComponent<AudioSource>().Play();
+        }
+        else
+        {
+            Debug.LogWarning("ah");
+            hits = Physics.BoxCastAll(boxCollider.bounds.center, boxCollider.bounds.size * 2f, transform.forward, transform.rotation, 2f);
+            GetComponent<AudioSource>().Play();
+            meshR.material = greenM;
+            foreach (RaycastHit hit in hits)
             {
-                Debug.Log("door: " + hit.collider);
-                StartCoroutine(UseItemVisual());
-                //GameObject.Find("Metal Kapı (5)").GetComponent<MoveDoor>().MoveDoorX();
-                //GameObject.Find("Metal Kapı (4)").GetComponent<MoveDoor>().MoveDoorX();
-                GameObject.Find("myDoor").GetComponent<MeshDestroy>().DestroyMesh();
+                Debug.Log(hit.collider);
+                if (hit.collider.CompareTag("door") && puzlleDone)
+                {
+                    Debug.Log("door: " + hit.collider);
+                    StartCoroutine(UseItemVisual());
+                    //GameObject.Find("Metal Kapı (5)").GetComponent<MoveDoor>().MoveDoorX();
+                    //GameObject.Find("Metal Kapı (4)").GetComponent<MoveDoor>().MoveDoorX();
+                    GameObject.Find("myDoor").GetComponent<MeshDestroy>().DestroyMesh();
 
+                }
             }
         }
+
     }
 
     IEnumerator UseItemVisual()

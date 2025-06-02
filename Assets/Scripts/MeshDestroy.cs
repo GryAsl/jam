@@ -22,10 +22,7 @@ public class MeshDestroy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            DestroyMesh();
-        }
+
     }
 
     public void DestroyMesh()

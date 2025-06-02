@@ -29,6 +29,10 @@ public class UIManager : MonoBehaviour
     public Camera PlayCam;
     public TextMeshProUGUI subText;
     public Image subImage;
+    public int tutID;
+    public int subID;
+
+    public Case caseX;
 
 
     void Start()
@@ -58,7 +62,9 @@ public class UIManager : MonoBehaviour
         StartCoroutine(StartGameUI());
         gm.StartGame();
         MenuCam.enabled = false;
+        MenuCam.tag = "Untagged";
         PlayCam.enabled = true;
+        PlayCam.tag = "MainCamera";
     }
 
     public void OpenSettingsMenu()
@@ -314,8 +320,9 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         lastA = col.a;
         t = 0;
-        GameObject.Find("kapsül2").GetComponent<Case>().rotate = true;
-        Debug.LogWarning("4: " + lastA);
+        //GameObject.Find("kapsül2").GetComponent<Case>().rotate = true;
+        //Debug.LogWarning("4: " + lastA);
+        caseX.rotate = true;
         while (t <= 1f)
         {
             t += .015f;
@@ -325,7 +332,7 @@ public class UIManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        yield return new WaitForSeconds(.1f);
+        
         
     }
 
@@ -338,10 +345,21 @@ public class UIManager : MonoBehaviour
 
     public IEnumerator TutOn(TextMeshProUGUI tutText, Image tutImage)
     {
+        tutID += 1;
+        int currentID = tutID;
+
         float t = 0f;
         Color col = tutImage.color;
+        col.a = 0f;
+        tutText.alpha = 0f;
         while (t <= 1)
         {
+            if (currentID != tutID)
+            {
+                Debug.LogError("KAPANIÞ: " + tutID + " currentID: " + currentID);
+                yield break;
+            }
+
             t += Time.fixedDeltaTime;
             tutText.alpha += .02f;
             col.a += .02f;
@@ -349,8 +367,16 @@ public class UIManager : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
         yield return new WaitForSecondsRealtime(3f);
+        col.a = 1f;
+        tutText.alpha = 1f;
         while (t >= 0)
         {
+            if (currentID != tutID)
+            {
+                Debug.LogError("KAPANIÞ: " + tutID + " currentID: " + currentID);
+                yield break;
+            }
+
             t -= Time.fixedDeltaTime;
             col.a -= .02f;
             tutText.alpha -= .02f;
@@ -362,30 +388,59 @@ public class UIManager : MonoBehaviour
 
     public IEnumerator SubOn(string text, float time)
     {
-        Debug.LogError("Baþlýyor");
+        subID += 1;
+        int currentID = subID;
+        Debug.LogError("Baþlýyor: " + subID +  " currentID: " + currentID);
         float t = 0f;
         subText.text = text;
+        subText.alpha = 0f;
         Color col = subImage.color;
+        col.a = 0f;
         while (t <= 1)
         {
-            Debug.LogWarning(subText.alpha);
+            if (currentID != subID)
+            {
+                Debug.LogError("KAPANIÞ: " + subID +  " currentID: " + currentID);
+                yield break;
+            }
+
             t += Time.fixedDeltaTime;
             subText.alpha += .02f;
             col.a += .02f;
             subImage.color = col;
             yield return new WaitForFixedUpdate();
         }
+        if (currentID != subID)
+        {
+            Debug.LogError("KAPANIÞ: " + subID + " currentID: " + currentID);
+            yield break;
+        }
         yield return new WaitForSecondsRealtime(time - 2f);
+        if (currentID != subID)
+        {
+            Debug.LogError("KAPANIÞ: " + subID + " currentID: " + currentID);
+            yield break;
+        }
+        col = subImage.color;
+        col.a = 1f;
+        subText.alpha = 1f;
         while (t >= 0)
         {
-            Debug.LogWarning(subText.alpha);
+            if (currentID != subID)
+            {
+                Debug.LogError("KAPANIÞ: " + subID + " currentID: " + currentID);
+                yield break;
+            }
             t -= Time.fixedDeltaTime;
             subText.alpha -= .02f;
             col.a -= .02f;
             subImage.color = col;
+            Debug.LogWarning(col.a);
             yield return new WaitForFixedUpdate();
         }
-        Debug.LogError("Bitti");
+        Debug.LogError("Bitti :" + subID + " currentID: " + currentID);
+        col.a = 0f;
+        subText.alpha = 0f;
 
     }
 }

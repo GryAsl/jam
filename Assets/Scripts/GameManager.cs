@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         isGameOn = true;
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 120;
         Cursor.visible = false;
     }
 

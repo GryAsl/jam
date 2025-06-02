@@ -23,7 +23,7 @@ public class DissolveObject : MonoBehaviour
 
         //float height = transform.position.y;
         //height += Mathf.Sin(time) * (objectHeight / 2.0f);
-        if (Input.GetKeyDown(keyCode))
+        if (Vector3.Distance(GameObject.Find("Player").transform.position, transform.position) < 5f && GameObject.Find("Player").GetComponent<Player>().key3)
         {
             dissolve = true;
             GetComponent<BoxCollider>().enabled = false;
